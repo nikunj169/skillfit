@@ -11,8 +11,7 @@ function PermissionGate() {
         <p className="eyebrow">Permissions</p>
         <h1>Prepare device access</h1>
         <p className="lede">
-          The final product will use camera and microphone capture. This starter flow asks for permissions and
-          then continues with transcript-based responses.
+          The application requires camera and microphone access to record your video responses. Please grant permissions to continue.
         </p>
 
         <div className="button-row">

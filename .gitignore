@@ -2,10 +2,14 @@ frontend/node_modules/
 frontend/dist/
 .venv/
 backend/.venv/
+.tmp/
+uploads/
 
 backend/__pycache__/
 backend/.pytest_cache/
 backend/.mypy_cache/
+pytest-cache-files-*/
+.pytest_cache/
 __pycache__/
 *.db
 *.sqlite3

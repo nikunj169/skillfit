@@ -87,6 +87,19 @@ function CandidateDetail() {
                     <p className="section-kicker">Question {response.order_index}</p>
                     <h3>{response.question_text}</h3>
                     <p className="transcript-block">{response.transcript}</p>
+                    {response.relevance_score !== null && response.relevance_score !== undefined && (
+                      <div className="button-row" style={{ marginTop: "14px" }}>
+                        <span className="chip">Relevance: {formatScore(response.relevance_score)}</span>
+                        <span className="chip">Clarity: {formatScore(response.clarity_score)}</span>
+                        <span className="chip">Completeness: {formatScore(response.completeness_score)}</span>
+                        <span className="chip">Confidence: {formatScore(response.skill_confidence_score)}</span>
+                      </div>
+                    )}
+                    {response.llm_notes && (
+                      <p className="transcript-block" style={{ marginTop: "14px", color: "#a5c1ff" }}>
+                        <strong>AI Notes:</strong> {response.llm_notes}
+                      </p>
+                    )}
                   </article>
                 ))}
               </div>

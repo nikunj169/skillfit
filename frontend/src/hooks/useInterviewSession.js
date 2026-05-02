@@ -50,7 +50,7 @@ export function useInterviewSession() {
     }
   }
 
-  async function sendChunk(promptId, transcriptHint) {
+  async function sendChunk(promptId, videoBlob) {
     if (!session) {
       throw new Error("Interview session has not started yet.");
     }
@@ -62,7 +62,7 @@ export function useInterviewSession() {
         session_token: session.session_token,
         prompt_id: promptId,
         language: registration.language,
-        transcript_hint: transcriptHint,
+        videoBlob,
       });
     } catch (requestError) {
       setError(requestError.message || "Unable to submit answer.");

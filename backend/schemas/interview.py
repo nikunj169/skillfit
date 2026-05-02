@@ -20,11 +20,6 @@ class InterviewSessionStartResponse(BaseModel):
     total_questions: int
 
 
-class InterviewChunkSubmitRequest(BaseModel):
-    session_token: str
-    prompt_id: str
-    language: str = Field(default="en", pattern="^(en|hi|kn)$")
-    transcript_hint: Optional[str] = None
 
 
 class InterviewChunkSubmitResponse(BaseModel):

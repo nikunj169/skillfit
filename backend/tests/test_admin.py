@@ -28,12 +28,12 @@ def test_admin_candidate_detail_includes_transcript_and_assessment(client):
 
     client.post(
         "/api/v1/interview/session/submit-chunk",
-        json={
+        data={
             "session_token": session_data["session_token"],
             "prompt_id": "q1",
             "language": "en",
-            "transcript_hint": "I handled urgent delivery routes and customer handoffs carefully.",
         },
+        files={"video": ("answer.webm", b"mock video content", "video/webm")},
     )
     client.post(
         "/api/v1/interview/session/finalize",

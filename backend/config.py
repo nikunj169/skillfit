@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     port: int = 8000
     database_url: str = "sqlite:///./skillfit.db"
     admin_token: str = "skillfit-admin"
+    sarvam_api_key: str | None = None
+    openai_api_key: str | None = None
     allowed_origins: List[str] = Field(
         default_factory=lambda: [
             "http://localhost:5173",

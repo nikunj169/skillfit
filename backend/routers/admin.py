@@ -116,6 +116,11 @@ def get_candidate(
                 "question_text": response.question_text,
                 "transcript": response.transcript,
                 "order_index": response.order_index,
+                "relevance_score": response.relevance_score,
+                "completeness_score": response.completeness_score,
+                "clarity_score": response.clarity_score,
+                "skill_confidence_score": response.skill_confidence_score,
+                "llm_notes": response.llm_notes,
             }
             for response in response_history
         ],

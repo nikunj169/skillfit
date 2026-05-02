@@ -4,36 +4,55 @@ import AIVoicePrompt from "../../components/AIVoicePrompt";
 import ProgressStepper from "../../components/ProgressStepper";
 import VideoRecorder from "../../components/VideoRecorder";
 import { useInterviewSession } from "../../hooks/useInterviewSession";
+import { useMediaRecorder } from "../../hooks/useMediaRecorder";
 import { useSessionContext } from "../../context/SessionContext";
 
 function Interview() {
   const navigate = useNavigate();
   const { registration, session } = useSessionContext();
   const { beginSession, sendChunk, questions, loading, error } = useInterviewSession();
+  const { requestPermissions, startRecording, stopRecording, cleanupStream, isRecording, stream } = useMediaRecorder();
+  
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [responseText, setResponseText] = useState("");
+  const [videoBlob, setVideoBlob] = useState(null);
   const hasStartedRef = useRef(false);
+  const recordPromiseRef = useRef(null);
 
   useEffect(() => {
     async function ensureSession() {
       if (!session && !hasStartedRef.current) {
         hasStartedRef.current = true;
+        await requestPermissions(true);
         await beginSession();
       }
     }
 
     ensureSession();
-  }, [beginSession, session]);
+    return () => cleanupStream();
+  }, [beginSession, session, requestPermissions, cleanupStream]);
 
   const currentQuestion = questions[currentIndex];
 
+  function handleStartRecording() {
+    setVideoBlob(null);
+    recordPromiseRef.current = startRecording();
+  }
+
+  async function handleStopRecording() {
+    stopRecording();
+    if (recordPromiseRef.current) {
+      const blob = await recordPromiseRef.current;
+      setVideoBlob(blob);
+    }
+  }
+
   async function handleNext() {
-    if (!currentQuestion || !responseText.trim()) {
+    if (!currentQuestion || !videoBlob) {
       return;
     }
 
-    await sendChunk(currentQuestion.id, responseText.trim());
-    setResponseText("");
+    await sendChunk(currentQuestion.id, videoBlob);
+    setVideoBlob(null);
 
     if (currentIndex === questions.length - 1) {
       navigate("/processing");
@@ -52,14 +71,28 @@ function Interview() {
         {currentQuestion ? (
           <>
             <AIVoicePrompt question={currentQuestion.text} language={registration.language} />
-            <VideoRecorder responseText={responseText} onChange={setResponseText} disabled={loading} />
+            <VideoRecorder 
+              stream={stream} 
+              isRecording={isRecording} 
+              onStart={handleStartRecording} 
+              onStop={handleStopRecording} 
+              disabled={loading} 
+            />
+            {videoBlob && !isRecording && (
+              <p className="inline-status">Recording saved! Ready to submit.</p>
+            )}
             {error ? <p className="error-text">{error}</p> : null}
             <div className="button-row">
               <button type="button" className="button button-secondary" onClick={() => navigate("/")}>
                 Exit
               </button>
-              <button type="button" className="button button-primary" onClick={handleNext} disabled={loading}>
-                {currentIndex === questions.length - 1 ? "Finish Interview" : "Submit and Continue"}
+              <button 
+                type="button" 
+                className="button button-primary" 
+                onClick={handleNext} 
+                disabled={loading || !videoBlob || isRecording}
+              >
+                {currentIndex === questions.length - 1 ? "Submit and Finish" : "Submit and Continue"}
               </button>
             </div>
           </>

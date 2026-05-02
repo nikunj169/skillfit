@@ -8,6 +8,11 @@ class QuestionResponseItem(BaseModel):
     question_text: str
     transcript: str
     order_index: int
+    relevance_score: Optional[float] = None
+    completeness_score: Optional[float] = None
+    clarity_score: Optional[float] = None
+    skill_confidence_score: Optional[float] = None
+    llm_notes: Optional[str] = None
 
 
 class CandidateSummary(BaseModel):

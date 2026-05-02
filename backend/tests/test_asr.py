@@ -16,11 +16,12 @@ def test_start_session_and_submit_chunk(client):
 
     chunk_response = client.post(
         "/api/v1/interview/session/submit-chunk",
-        json={
+        data={
             "session_token": session_token,
-            "prompt_id": "intro-1",
+            "prompt_id": "q1",
             "language": "en",
         },
+        files={"video": ("answer.webm", b"mock video content", "video/webm")},
     )
     assert chunk_response.status_code == 200
     assert "experience" in chunk_response.json()["transcript"].lower()

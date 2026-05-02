@@ -1,7 +1,8 @@
 import secrets
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, File, Form, UploadFile
 from sqlalchemy.orm import Session
+import os
 
 from backend.dependencies import get_db
 from backend.models.candidate import Candidate
@@ -10,7 +11,6 @@ from backend.models.session import InterviewSession
 from backend.schemas.interview import (
     InterviewFinalizeRequest,
     InterviewFinalizeResponse,
-    InterviewChunkSubmitRequest,
     InterviewChunkSubmitResponse,
     InterviewQuestion,
     InterviewQuestionSetResponse,
@@ -55,22 +55,33 @@ def start_session(payload: InterviewSessionStartRequest, db: Session = Depends(g
 
 
 @router.post("/session/submit-chunk", response_model=InterviewChunkSubmitResponse)
-def submit_chunk(payload: InterviewChunkSubmitRequest, db: Session = Depends(get_db)):
-    session = db.query(InterviewSession).filter_by(session_token=payload.session_token).first()
+def submit_chunk(
+    video: UploadFile = File(...),
+    session_token: str = Form(...),
+    prompt_id: str = Form(...),
+    language: str = Form("en"),
+    db: Session = Depends(get_db)
+):
+    session = db.query(InterviewSession).filter_by(session_token=session_token).first()
     if not session:
         raise HTTPException(status_code=404, detail="Interview session not found.")
 
+    os.makedirs("uploads", exist_ok=True)
+    video_path = f"uploads/{session_token}_{prompt_id}.webm"
+    with open(video_path, "wb") as f:
+        f.write(video.file.read())
+
     candidate = db.query(Candidate).filter_by(id=session.candidate_id).first()
-    transcript = transcribe(payload.language, payload.transcript_hint)
+    transcript = transcribe(language, video_path)
     current = session.transcript or ""
     session.transcript = f"{current}\n{transcript}".strip()
     db.add(session)
     db.commit()
     role_applied = candidate.role_applied if candidate else "electrician"
-    questions = get_questions(role_applied, payload.language, db=db)
-    current_question = next((question for question in questions if question["id"] == payload.prompt_id), None)
+    questions = get_questions(role_applied, language, db=db)
+    current_question = next((question for question in questions if question["id"] == prompt_id), None)
     question_index = next(
-        (index for index, question in enumerate(questions) if question["id"] == payload.prompt_id),
+        (index for index, question in enumerate(questions) if question["id"] == prompt_id),
         None,
     )
     next_question = None
@@ -90,7 +101,7 @@ def submit_chunk(payload: InterviewChunkSubmitRequest, db: Session = Depends(get
         db.commit()
 
     return InterviewChunkSubmitResponse(
-        prompt_id=payload.prompt_id,
+        prompt_id=prompt_id,
         transcript=transcript,
         status=session.status,
         next_question=next_question,
