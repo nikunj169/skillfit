@@ -1,0 +1,46 @@
+SkillFit Change Log
+===================
+
+Implemented before this log:
+- Set up the Vite frontend scaffold with React entry files, root scripts, and a working build.
+- Created a FastAPI backend starter with SQLite-friendly defaults, starter models, routers, tests, Docker config, and infra placeholders.
+- Added repo-level helper scripts and a `.gitignore` for generated assets and local environments.
+
+2026-05-02
+- Started the next implementation phase after reviewing the README thoroughly.
+- Chosen next milestone: build the end-to-end candidate/admin frontend flow and align backend endpoints with the documented API.
+- Added a README implementation status section so the repository now records what is already working and what is still placeholder/starter behavior.
+- Expanded the backend interview flow with documented endpoints for question fetch, finalize, session status, admin login, admin stats, and candidate status updates.
+- Added a starter question bank service and workforce-category inference to support role-based interview sessions.
+- Reworked the frontend into a routed candidate/admin application with contexts, hooks, services, pages, reusable UI components, and production-buildable styling.
+- Wired the candidate flow from landing to registration, permissions, interview, and completion screens using the live backend API.
+- Wired the admin flow from login to dashboard, candidate list, stats, filtering, and detail view using the live backend API.
+- Filled the i18n files with starter locale content and initialized the translation layer.
+- Extended backend tests to cover finalize/status and admin login/stats, then verified the suite passes.
+- Verified the frontend production build passes after the new app wiring.
+- Implemented the next small step after a fresh README review: moved the question-bank workflow closer to the documented design.
+- Added a `questions` database model and made the interview question endpoint prefer DB-backed question rows when they exist.
+- Kept a fallback in the in-code question bank so local development does not break if the database has not been seeded yet.
+- Replaced `scripts/seed_questions.py` placeholder logic with a working seed script for starter electrician and delivery associate question sets in English, Hindi, and Kannada.
+- Added a small backend test to cover the question-fetch endpoint.
+- Updated the README to reflect the new question-bank persistence behavior and the current fallback approach.
+- Implemented the next small README-aligned step: enriched the admin candidate detail flow with the latest transcript and assessment summary.
+- Expanded the admin candidate detail API to include the latest stored session transcript, session status, and latest assessment score breakdown.
+- Updated the admin candidate detail page to render transcript text plus strengths and improvement areas from the latest assessment.
+- Added a focused backend test to verify the admin detail response now includes transcript and assessment data after interview finalization.
+- Updated the README to reflect the richer admin review experience and its current scope.
+- After a full README and repo-wide audit, implemented the next smallest meaningful candidate-flow step: a dedicated processing/status screen before final results.
+- Updated the candidate interview flow to navigate to a processing route after the last answer instead of jumping directly to the completion page.
+- Reused the existing session-status endpoint on the processing screen so the frontend now reflects the documented processing step in the README.
+- Added a loading indicator plus basic failure messaging on the processing page.
+- Updated the README to describe the new processing/status route and to clarify that backend finalization is still synchronous today.
+- After another full README and repo-wide audit, implemented the next single logical step: made interview finalization use a lightweight backend background-processing flow.
+- Updated the finalize endpoint so it marks sessions as `PROCESSING` and offloads assessment/classification updates to a background task.
+- Updated the candidate processing page to poll the status endpoint until the session reaches `COMPLETED` or `FAILED`.
+- Adjusted interview status responses to provide the final next-step message needed by the result screen.
+- Updated the README to reflect that finalization is no longer purely synchronous, while noting that this is still a lightweight in-process background model rather than a full queue system.
+- After another full README and repo-wide audit, implemented the next single logical step: persist per-question interview responses and surface them in admin review.
+- Added a `question_responses` model and now store each submitted answer with its question key, question text, transcript, and order index.
+- Expanded the admin candidate detail API to include `response_history` for the latest session.
+- Updated the admin candidate detail page to render the per-question responses under the latest transcript and assessment summary.
+- Updated the README to reflect that per-question transcripts now persist, while per-question scoring is still not stored yet.

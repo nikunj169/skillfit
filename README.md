@@ -8,6 +8,7 @@
 
 - [Problem Context](#problem-context)
 - [Solution Overview](#solution-overview)
+- [Current Implementation Status](#current-implementation-status)
 - [System Architecture](#system-architecture)
 - [Project Structure](#project-structure)
 - [Core Modules](#core-modules)
@@ -22,6 +23,41 @@
 - [Evaluation Criteria Mapping](#evaluation-criteria-mapping)
 - [Technology Decisions & Rationale](#technology-decisions--rationale)
 - [Known Limitations & Future Work](#known-limitations--future-work)
+
+---
+
+## Current Implementation Status
+
+The repository now includes a working starter implementation for both the frontend and backend.
+
+### Completed So Far
+
+- Vite + React frontend bootstrapped with root scripts and local build support
+- FastAPI backend bootstrapped with SQLite-friendly local defaults
+- Candidate interview flow scaffolded in the frontend:
+  landing, registration, permission gate, interview, processing, and result pages
+- Admin flow scaffolded in the frontend:
+  login, dashboard, stats, candidate list, and candidate detail view
+- Admin candidate detail now includes the latest stored transcript and latest assessment breakdown when available
+- Per-question candidate responses are now persisted and shown in the admin detail view
+- Backend endpoints implemented for:
+  session start, question fetch, chunk submit, session finalize, session status, admin login, candidate list, candidate detail, candidate status update, and admin stats
+- Interview finalization now uses a lightweight background-processing step:
+  the finalize endpoint marks the session as `PROCESSING`, the backend completes assessment/classification in a background task, and the status endpoint exposes the final result
+- Question bank persistence has been partially implemented:
+  a `questions` table model exists, the API can read seeded DB questions, and `scripts/seed_questions.py` now seeds starter role/language question sets
+- Docker Compose, Nginx, and Kubernetes starter infrastructure files added
+- Basic backend tests passing for core API flow
+
+### Current Scope of the Prototype
+
+- The interview flow currently submits transcript text rather than full video blobs
+- ASR, TTS, integrity validation, and duplicate detection are starter placeholders
+- Question lookup still keeps a code fallback so local development works even before seeding
+- Admin detail uses the latest stored session and assessment records rather than a full per-question audit trail
+- Per-question response persistence is now available, but per-question scoring is still not stored yet
+- The processing screen now uses the session-status endpoint, and interview finalization now runs through a lightweight backend background task
+- SQLite is sufficient for local development; PostgreSQL/pgvector remains the next infrastructure upgrade for production parity
 
 ---
 
@@ -460,6 +496,10 @@ Candidate opens mobile browser
 | `asr_confidence` | FLOAT | |
 | `llm_notes` | TEXT | |
 
+Current implementation note:
+- The prototype now persists per-question response text in a `question_responses` table with question key/text, transcript, and order index.
+- Per-question scoring fields from the target design are not stored yet; assessment remains session-level for now.
+
 ### `face_embeddings`
 
 | Column | Type | Notes |
@@ -479,6 +519,11 @@ Candidate opens mobile browser
 | `question_text` | TEXT | |
 | `question_audio_url` | TEXT | Pre-generated TTS |
 | `order_index` | INT | |
+
+Current implementation note:
+- The prototype now includes a SQLAlchemy `questions` model and a working seed script for starter interview questions.
+- The question API reads from the database when rows are present and falls back to the in-code bank otherwise.
+- The candidate frontend now includes a processing/status route before the final result screen to match the documented interview flow more closely.
 
 ---
 
@@ -586,6 +631,9 @@ Access:
 - Admin dashboard: `http://localhost:5173/admin`
 - API docs (Swagger): `http://localhost:8000/docs`
 
+Small next-step note:
+- If you want the documented question-bank workflow, run `python scripts/seed_questions.py` from the repo root after starting the backend environment once.
+
 ---
 
 ## Running with Docker
@@ -660,6 +708,10 @@ The Round 2 prototype demonstrates an end-to-end flow:
 4. **Candidate responds** by speaking into phone camera
 5. **Processing screen** shows while ASR → LLM pipeline runs
 6. **Result screen**: Candidate sees their fitment label and next step message in Kannada
+
+Current prototype note:
+- The UI now includes the processing screen and checks the session-status endpoint before showing results.
+- The backend now performs a lightweight background finalization step, though it is still not a full external queue/worker architecture yet.
 7. **Admin dashboard**: Officer filters by Dharwad district, sees new candidate with transcript, per-dimension scores, and integrity status — clicks Shortlist for Training
 
 ---
@@ -711,3 +763,7 @@ Zero install friction is a hard requirement for low-digital-literacy candidates.
 ## License
 
 This project was developed for the AI SkillFit hackathon problem statement issued by the Directorate of Electronic Delivery of Citizen Services (EDCS), Karnataka. All third-party models and APIs are subject to their respective licenses and terms of service.
+
+
+
+run backend:- .venv/bin/uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000

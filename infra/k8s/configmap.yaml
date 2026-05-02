@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skillfit-config
+data:
+  SKILLFIT_DATABASE_URL: "postgresql://skillfit:skillfit@skillfit-db:5432/skillfit"
+  SKILLFIT_ADMIN_TOKEN: "skillfit-admin"
+  SKILLFIT_ALLOWED_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173","http://localhost"]'

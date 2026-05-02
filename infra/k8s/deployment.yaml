@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillfit-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skillfit-backend
+  template:
+    metadata:
+      labels:
+        app: skillfit-backend
+    spec:
+      containers:
+        - name: backend
+          image: skillfit-backend:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: skillfit-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillfit-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skillfit-frontend
+  template:
+    metadata:
+      labels:
+        app: skillfit-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: skillfit-frontend:latest
+          ports:
+            - containerPort: 5173
