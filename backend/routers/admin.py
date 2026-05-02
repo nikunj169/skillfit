@@ -96,6 +96,7 @@ def get_candidate(
         shortlisted=candidate.shortlisted,
         phone_number=candidate.phone_number,
         integrity_flags=candidate.integrity_flags or [],
+        face_presence_ratio=candidate.face_presence_ratio,
         latest_transcript=latest_session.transcript if latest_session else "",
         latest_session_status=latest_session.status if latest_session else "PENDING",
         latest_assessment=(
@@ -158,6 +159,7 @@ def shortlist_candidate(
         shortlisted=candidate.shortlisted,
         phone_number=candidate.phone_number,
         integrity_flags=candidate.integrity_flags or [],
+        face_presence_ratio=candidate.face_presence_ratio,
         latest_transcript="",
         latest_session_status="PENDING",
         latest_assessment=None,

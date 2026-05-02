@@ -32,6 +32,7 @@ class CandidateSummary(BaseModel):
 class CandidateDetail(CandidateSummary):
     phone_number: Optional[str] = None
     integrity_flags: List[str] = []
+    face_presence_ratio: Optional[float] = None
     latest_transcript: str = ""
     latest_session_status: str = "PENDING"
     latest_assessment: Optional[dict] = None

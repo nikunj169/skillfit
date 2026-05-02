@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     admin_token: str = "skillfit-admin"
     sarvam_api_key: str | None = None
     openai_api_key: str | None = None
+    anthropic_api_key: str | None = None
+    llm_provider: str = "openai"
     allowed_origins: List[str] = Field(
         default_factory=lambda: [
             "http://localhost:5173",

@@ -44,3 +44,31 @@ Implemented before this log:
 - Expanded the admin candidate detail API to include `response_history` for the latest session.
 - Updated the admin candidate detail page to render the per-question responses under the latest transcript and assessment summary.
 - Updated the README to reflect that per-question transcripts now persist, while per-question scoring is still not stored yet.
+- After reviewing the repository again, realized the `VideoRecorder` had been updated to send real video blobs, and per-question scoring was already implemented.
+- Chosen the single most logical next step: Wire up the integrity placeholders (audio, face, duplicate detection) into the async pipeline.
+- Added `face_presence_ratio` to the `Candidate` model and schema.
+- Updated `backend/tasks/async_pipeline.py` to invoke the mock integrity validators and compute average face presence.
+- Updated `CandidateDetail.jsx` and the admin router to pass and render the `face_presence_ratio`.
+- Updated `README.md` to reflect that video blobs are now submitted, per-question scoring is fully persisted, and integrity checks are wired into the classification pipeline.
+- Implemented the next logical step: Replaced the mock Face Validation logic with real MediaPipe/OpenCV ML processing.
+- Added `opencv-python-headless` and `mediapipe` to `backend/requirements.txt`.
+- Updated `backend/services/integrity/face_validator.py` to extract frames from `.webm` blobs at ~2fps and run MediaPipe Face Detection to accurately compute the `face_presence_ratio`.
+- Implemented the next logical step: Replaced the mock LLM Assessment logic with real OpenAI API integration.
+- Added `openai` to `backend/requirements.txt` and updated `backend/config.py` with `llm_provider` and `anthropic_api_key`.
+- Updated `backend/services/assessment/llm_assessor.py` to prompt `gpt-4o-mini` with strict JSON-mode for evaluating candidate transcripts on relevance, completeness, clarity, and confidence.
+- Implemented the next logical step: Integrated browser-native Text-to-Speech (TTS) for question delivery.
+- Updated `frontend/src/components/AIVoicePrompt.jsx` to use `window.speechSynthesis`, allowing the candidate to actually hear the AI voice read the questions in English, Hindi, or Kannada.
+- Implemented the next logical step: Wired up the Admin Action buttons for shortlisting candidates.
+- Updated `frontend/src/pages/admin/CandidateDetail.jsx` to consume the `updateCandidateStatus` service, adding an interactive button that allows admins to officially shortlist candidates.
+- Implemented the next logical step: Added pagination and sorting to the Admin Dashboard candidate list.
+- Updated `frontend/src/hooks/useAdminFilters.js` and `frontend/src/pages/admin/Dashboard.jsx` to support dynamic column sorting and paginated views, completing the Admin Dashboard MVP requirements.
+- Implemented the next logical step: Added Language and Role dropdown selectors to the Candidate Registration flow.
+- Updated `frontend/src/pages/candidate/Registration.jsx` to expose the backend's multilingual and role-specific capabilities to the candidate UI, replacing the free-form text inputs with structured `<select>` elements.
+- Implemented the next logical step: Replaced the mock Duplicate Detection logic with a functional SQLite-compatible cosine similarity search.
+- Updated `backend/services/integrity/duplicate_detector.py` to query all existing `CandidateEmbedding` vectors and compute pairwise cosine similarity, flagging matches above 0.85.
+- Updated `backend/tasks/async_pipeline.py` to generate a deterministic 128-dim embedding from the candidate name, persist it to the `CandidateEmbedding` table, and pass both the vector and db session to the detector.
+- Implemented the next logical step: Replaced the mock Audio Validation logic with real ffmpeg-based SNR and silence analysis.
+- Updated `backend/services/integrity/audio_validator.py` to extract audio via ffmpeg subprocess, compute RMS-based SNR and silence ratio from raw PCM samples, and gracefully fall back to mock values when ffmpeg is not installed on the host.
+- Implemented the next logical step: Fixed the broken Integrity Router and updated the test suite.
+- Updated `backend/routers/integrity.py` to pass required arguments (video_path, candidate_id, db) to the updated service functions via query parameters and dependency injection.
+- Updated `backend/tests/test_integrity.py` to match the new API contract, adding a test that creates a real candidate and verifies duplicate detection against the database.

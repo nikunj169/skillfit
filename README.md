@@ -51,11 +51,16 @@ The repository now includes a working starter implementation for both the fronte
 
 ### Current Scope of the Prototype
 
-- The interview flow currently submits transcript text rather than full video blobs
-- ASR, TTS, integrity validation, and duplicate detection are starter placeholders
+- The interview flow now submits actual video blobs via the `MediaRecorder` API
+- ASR is a starter placeholder or API-key gated
+- Text-to-Speech (TTS) for question delivery is now fully functional using the browser-native `window.speechSynthesis` API
+- Face Validation is now powered by real MediaPipe/OpenCV ML logic, processing uploaded video blobs at 2fps to verify candidate presence
+- LLM Assessment Engine is now integrated with the OpenAI API using structured JSON output to score transcripts automatically
+- Duplicate detection now uses SQLite-compatible cosine similarity over stored embeddings (DeepFace face-embedding extraction planned for production)
+- Audio Validation now computes real SNR and silence ratio when `ffmpeg` is available; gracefully falls back to mock values when it is not
+- Admin detail now includes a full per-question audit trail with per-question scoring and AI notes
+- Admin action buttons are now functional, allowing recruiters to officially shortlist candidates from the detail view
 - Question lookup still keeps a code fallback so local development works even before seeding
-- Admin detail uses the latest stored session and assessment records rather than a full per-question audit trail
-- Per-question response persistence is now available, but per-question scoring is still not stored yet
 - The processing screen now uses the session-status endpoint, and interview finalization now runs through a lightweight backend background task
 - SQLite is sufficient for local development; PostgreSQL/pgvector remains the next infrastructure upgrade for production parity
 

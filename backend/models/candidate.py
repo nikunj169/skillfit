@@ -18,6 +18,7 @@ class Candidate(Base):
     overall_score = Column(Float, nullable=False, default=0.0)
     confidence_score = Column(Float, nullable=False, default=0.0)
     integrity_flags = Column(JSON, nullable=False, default=list)
+    face_presence_ratio = Column(Float, nullable=True)
     status = Column(String(40), nullable=False, default="pending")
     shortlisted = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
