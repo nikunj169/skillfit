@@ -3,5 +3,20 @@
   "candidatePortal": "Candidate Portal",
   "adminPortal": "Admin Dashboard",
   "start": "Start",
-  "continue": "Continue"
+  "continue": "Continue",
+  "landing": {
+    "eyebrow": "SkillFit Candidate Portal",
+    "headline": "Multilingual interview screening for mobile-first candidates.",
+    "lede": "Start in English, Hindi, or Kannada. The current prototype focuses on a guided transcript-based interview flow wired to the FastAPI backend.",
+    "startButton": "Start Candidate Flow",
+    "adminButton": "Open Admin Dashboard",
+    "liveTitle": "What is live right now",
+    "liveItems": [
+      "Candidate registration",
+      "Question fetching from backend",
+      "Interview session creation and answer submission",
+      "Result classification screen",
+      "Admin login, stats, list, and detail view"
+    ]
+  }
 }

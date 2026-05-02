@@ -41,11 +41,28 @@ function Registration() {
           </label>
           <label className="form-field">
             <span>Role applied</span>
-            <input
+            <select
               value={formState.role_applied}
               onChange={(event) => handleChange("role_applied", event.target.value)}
               required
-            />
+            >
+              <option value="Electrician">Electrician</option>
+              <option value="Delivery Associate">Delivery Associate</option>
+              <option value="Plumber">Plumber</option>
+              <option value="Welder">Welder</option>
+            </select>
+          </label>
+          <label className="form-field">
+            <span>Interview Language</span>
+            <select
+              value={formState.language}
+              onChange={(event) => handleChange("language", event.target.value)}
+              required
+            >
+              <option value="en">English (English)</option>
+              <option value="hi">Hindi (हिंदी)</option>
+              <option value="kn">Kannada (ಕನ್ನಡ)</option>
+            </select>
           </label>
           <label className="form-field">
             <span>Phone number</span>

@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import FitmentBadge from "../../components/FitmentBadge";
 import IntegrityFlag from "../../components/IntegrityFlag";
-import { getCandidateDetail } from "../../services/admin.service";
+import { getCandidateDetail, updateCandidateStatus } from "../../services/admin.service";
 import { formatScore } from "../../utils/formatters";
 
 function CandidateDetail() {
   const { candidateId } = useParams();
   const [candidate, setCandidate] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     async function loadCandidate() {
@@ -17,6 +18,18 @@ function CandidateDetail() {
 
     loadCandidate();
   }, [candidateId]);
+
+  async function handleToggleShortlist() {
+    setIsUpdating(true);
+    try {
+      const updated = await updateCandidateStatus(candidateId, !candidate.shortlisted);
+      setCandidate(updated);
+    } catch (err) {
+      alert("Failed to update status.");
+    } finally {
+      setIsUpdating(false);
+    }
+  }
 
   if (!candidate) {
     return (
@@ -35,10 +48,23 @@ function CandidateDetail() {
           Back to dashboard
         </Link>
         <p className="eyebrow">Candidate Detail</p>
-        <h1>{candidate.full_name}</h1>
-        <FitmentBadge label={candidate.fitment_label} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h1>{candidate.full_name}</h1>
+            <FitmentBadge label={candidate.fitment_label} />
+          </div>
+          <div className="button-row">
+            <button
+              className={`button ${candidate.shortlisted ? "button-secondary" : "button-primary"}`}
+              onClick={handleToggleShortlist}
+              disabled={isUpdating}
+            >
+              {candidate.shortlisted ? "Remove from Shortlist" : "Shortlist Candidate"}
+            </button>
+          </div>
+        </div>
 
-        <div className="detail-grid">
+        <div className="detail-grid" style={{ marginTop: "32px" }}>
           <div className="panel panel-soft">
             <h2>Profile</h2>
             <p>District: {candidate.district}</p>
@@ -53,6 +79,9 @@ function CandidateDetail() {
             <h2>Assessment Summary</h2>
             <p>Overall score: {candidate.overall_score.toFixed(2)}</p>
             <p>Confidence score: {candidate.confidence_score.toFixed(2)}</p>
+            {candidate.face_presence_ratio !== null && candidate.face_presence_ratio !== undefined && (
+              <p>Face presence: {(candidate.face_presence_ratio * 100).toFixed(0)}%</p>
+            )}
             <p>Latest session status: {candidate.latest_session_status}</p>
             <IntegrityFlag flags={candidate.integrity_flags || []} />
             {candidate.latest_assessment ? (

@@ -11,7 +11,16 @@ function Dashboard() {
   const { logout } = useAdminContext();
   const [stats, setStats] = useState(null);
   const [candidates, setCandidates] = useState([]);
-  const { filters, setFilters, filteredCandidates } = useAdminFilters(candidates);
+  const {
+    filters,
+    setFilters,
+    sortConfig,
+    handleSort,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedCandidates,
+  } = useAdminFilters(candidates);
 
   useEffect(() => {
     async function loadData() {
@@ -62,17 +71,29 @@ function Dashboard() {
           <table>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>District</th>
-                <th>Role</th>
-                <th>Language</th>
-                <th>Fitment</th>
-                <th>Score</th>
+                <th onClick={() => handleSort("full_name")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  Name {sortConfig.key === "full_name" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
+                <th onClick={() => handleSort("district")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  District {sortConfig.key === "district" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
+                <th onClick={() => handleSort("role_applied")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  Role {sortConfig.key === "role_applied" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
+                <th onClick={() => handleSort("language")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  Language {sortConfig.key === "language" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
+                <th onClick={() => handleSort("fitment_label")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  Fitment {sortConfig.key === "fitment_label" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
+                <th onClick={() => handleSort("overall_score")} style={{ cursor: "pointer", userSelect: "none" }}>
+                  Score {sortConfig.key === "overall_score" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                </th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCandidates.map((candidate) => (
+              {paginatedCandidates.map((candidate) => (
                 <tr key={candidate.id}>
                   <td>
                     <Link to={`/admin/candidates/${candidate.id}`}>{candidate.full_name}</Link>
@@ -98,6 +119,28 @@ function Dashboard() {
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="pagination-controls" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px" }}>
+            <button 
+              type="button" 
+              className="button button-secondary" 
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button 
+              type="button" 
+              className="button button-secondary" 
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </section>
     </main>
   );
