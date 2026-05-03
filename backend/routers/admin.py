@@ -12,11 +12,18 @@ from backend.schemas.admin import (
     AdminLoginRequest,
     AdminLoginResponse,
     AdminStatsResponse,
+    CandidateActionRequest,
     CandidateDetail,
     CandidateListResponse,
     CandidateSummary,
-    ShortlistRequest,
 )
+
+_ACTION_MAP = {
+    "shortlist_job": (True, "shortlisted"),
+    "shortlist_training": (True, "shortlisted_training"),
+    "flag_review": (False, "manual_review"),
+    "reject": (False, "rejected"),
+}
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -24,7 +31,7 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 @router.post("/login", response_model=AdminLoginResponse)
 def admin_login(payload: AdminLoginRequest):
     settings = get_settings()
-    if payload.username != "admin@skillfit.in" or payload.password != "skillfit2024":
+    if payload.username != settings.admin_username or payload.password != settings.admin_password:
         raise HTTPException(status_code=401, detail="Invalid admin credentials.")
     return AdminLoginResponse(token=settings.admin_token, message="Login successful.")
 
@@ -129,9 +136,9 @@ def get_candidate(
 
 
 @router.patch("/candidates/{candidate_id}/status", response_model=CandidateDetail)
-def shortlist_candidate(
+def update_candidate_action(
     candidate_id: int,
-    payload: ShortlistRequest,
+    payload: CandidateActionRequest,
     db: Session = Depends(get_db),
     _: str = Depends(verify_admin_token),
 ):
@@ -139,8 +146,9 @@ def shortlist_candidate(
     if not candidate:
         raise HTTPException(status_code=404, detail="Candidate not found.")
 
-    candidate.shortlisted = payload.shortlisted
-    candidate.status = "shortlisted" if payload.shortlisted else "manual_review"
+    shortlisted, status = _ACTION_MAP[payload.action]
+    candidate.shortlisted = shortlisted
+    candidate.status = status
     db.add(candidate)
     db.commit()
     db.refresh(candidate)

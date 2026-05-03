@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import AIVoicePrompt from "../../components/AIVoicePrompt";
 import ProgressStepper from "../../components/ProgressStepper";
@@ -9,10 +10,11 @@ import { useSessionContext } from "../../context/SessionContext";
 
 function Interview() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { registration, session } = useSessionContext();
   const { beginSession, sendChunk, questions, loading, error } = useInterviewSession();
   const { requestPermissions, startRecording, stopRecording, cleanupStream, isRecording, stream } = useMediaRecorder();
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [videoBlob, setVideoBlob] = useState(null);
   const hasStartedRef = useRef(false);
@@ -32,6 +34,10 @@ function Interview() {
   }, [beginSession, session, requestPermissions, cleanupStream]);
 
   const currentQuestion = questions[currentIndex];
+
+  const localizedRole = registration.role_applied
+    ? t(`registration.roles.${registration.role_applied}`, { defaultValue: registration.role_applied })
+    : t("interview.defaultRole");
 
   function handleStartRecording() {
     setVideoBlob(null);
@@ -65,39 +71,41 @@ function Interview() {
   return (
     <main className="screen">
       <section className="panel">
-        <p className="eyebrow">Interview</p>
-        <h1>{registration.role_applied || "Candidate"} interview</h1>
+        <p className="eyebrow">{t("interview.eyebrow")}</p>
+        <h1>{t("interview.headline", { role: localizedRole })}</h1>
         <ProgressStepper currentStep={currentIndex + 1} totalSteps={Math.max(questions.length, 3)} />
         {currentQuestion ? (
           <>
             <AIVoicePrompt question={currentQuestion.text} language={registration.language} />
-            <VideoRecorder 
-              stream={stream} 
-              isRecording={isRecording} 
-              onStart={handleStartRecording} 
-              onStop={handleStopRecording} 
-              disabled={loading} 
+            <VideoRecorder
+              stream={stream}
+              isRecording={isRecording}
+              onStart={handleStartRecording}
+              onStop={handleStopRecording}
+              disabled={loading}
             />
             {videoBlob && !isRecording && (
-              <p className="inline-status">Recording saved! Ready to submit.</p>
+              <p className="inline-status">{t("interview.recordingSaved")}</p>
             )}
             {error ? <p className="error-text">{error}</p> : null}
             <div className="button-row">
               <button type="button" className="button button-secondary" onClick={() => navigate("/")}>
-                Exit
+                {t("interview.buttonExit")}
               </button>
-              <button 
-                type="button" 
-                className="button button-primary" 
-                onClick={handleNext} 
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={handleNext}
                 disabled={loading || !videoBlob || isRecording}
               >
-                {currentIndex === questions.length - 1 ? "Submit and Finish" : "Submit and Continue"}
+                {currentIndex === questions.length - 1
+                  ? t("interview.buttonSubmitFinish")
+                  : t("interview.buttonSubmitContinue")}
               </button>
             </div>
           </>
         ) : (
-          <p className="inline-status">Loading question set...</p>
+          <p className="inline-status">{t("interview.loadingQuestions")}</p>
         )}
       </section>
     </main>

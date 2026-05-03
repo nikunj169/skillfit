@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "../../context/SessionContext";
 import { useInterviewSession } from "../../hooks/useInterviewSession";
@@ -6,9 +7,10 @@ import { getInterviewStatus } from "../../services/interview.service";
 
 function Processing() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { session, result, setResult } = useSessionContext();
   const { finishSession } = useInterviewSession();
-  const [statusMessage, setStatusMessage] = useState("Submitting final interview answers...");
+  const [statusMessage, setStatusMessage] = useState(() => t("processing.statusSubmitting"));
   const hasStartedRef = useRef(false);
 
   useEffect(() => {
@@ -29,12 +31,12 @@ function Processing() {
       hasStartedRef.current = true;
 
       try {
-        setStatusMessage("Finalizing interview session...");
+        setStatusMessage(t("processing.statusFinalizing"));
         await finishSession();
 
         let latestStatus = await getInterviewStatus(session.session_id);
         while (latestStatus.status === "PROCESSING") {
-          setStatusMessage("Checking classification status...");
+          setStatusMessage(t("processing.statusChecking"));
           await new Promise((resolve) => window.setTimeout(resolve, 800));
           latestStatus = await getInterviewStatus(session.session_id);
         }
@@ -49,26 +51,26 @@ function Processing() {
           overall_score: latestStatus.overall_score,
           confidence_score: latestStatus.confidence_score,
           status: latestStatus.status,
-          next_step_message: latestStatus.next_step_message || "Your interview review is complete.",
+          next_step_message: latestStatus.next_step_message || "",
         });
 
         navigate("/complete", { replace: true });
       } catch {
-        setStatusMessage("We could not complete processing. Please try the interview again.");
+        setStatusMessage(t("processing.statusError"));
       }
     }
 
     finalizeAndPoll();
-  }, [finishSession, navigate, result, session, setResult]);
+  }, [finishSession, navigate, result, session, setResult, t]);
 
   return (
     <main className="screen">
       <section className="panel panel-narrow">
-        <p className="eyebrow">Processing</p>
-        <h1>We are reviewing the interview now.</h1>
+        <p className="eyebrow">{t("processing.eyebrow")}</p>
+        <h1>{t("processing.headline")}</h1>
         <div className="loader-ring" aria-hidden="true" />
         <p className="lede">{statusMessage}</p>
-        <p className="inline-status">This prototype uses the backend status endpoint before showing results.</p>
+        <p className="inline-status">{t("processing.footerNote")}</p>
       </section>
     </main>
   );

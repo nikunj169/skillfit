@@ -14,6 +14,44 @@ def test_admin_login_and_stats(client):
     assert "total_candidates" in stats_response.json()
 
 
+def test_admin_candidate_actions(client):
+    start_response = client.post(
+        "/api/v1/interview/session/start",
+        json={
+            "full_name": "Priya Sharma",
+            "district": "Dharwad",
+            "role_applied": "Plumber",
+            "language": "kn",
+        },
+    )
+    assert start_response.status_code == 200
+    candidate_id = start_response.json()["candidate_id"]
+
+    login_response = client.post(
+        "/api/v1/admin/login",
+        json={"username": "admin@skillfit.in", "password": "skillfit2024"},
+    )
+    token = login_response.json()["token"]
+    headers = {"X-Admin-Token": token}
+
+    cases = [
+        ("shortlist_job", "shortlisted", True),
+        ("shortlist_training", "shortlisted_training", True),
+        ("flag_review", "manual_review", False),
+        ("reject", "rejected", False),
+    ]
+    for action, expected_status, expected_shortlisted in cases:
+        response = client.patch(
+            f"/api/v1/admin/candidates/{candidate_id}/status",
+            json={"action": action},
+            headers=headers,
+        )
+        assert response.status_code == 200, f"action={action} got {response.status_code}"
+        data = response.json()
+        assert data["status"] == expected_status, f"action={action}: status={data['status']}"
+        assert data["shortlisted"] == expected_shortlisted, f"action={action}: shortlisted={data['shortlisted']}"
+
+
 def test_admin_candidate_detail_includes_transcript_and_assessment(client):
     start_response = client.post(
         "/api/v1/interview/session/start",

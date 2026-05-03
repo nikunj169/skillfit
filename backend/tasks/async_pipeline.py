@@ -50,6 +50,7 @@ def run_interview_pipeline(session_id: int, role_applied: str, language: str) ->
         clarity_scores = []
         confidence_scores = []
         relevance_scores = []
+        scored_notes = []
 
         integrity_flags = []
         ratios = []
@@ -80,6 +81,10 @@ def run_interview_pipeline(session_id: int, role_applied: str, language: str) ->
             confidence_scores.append(q_scores["skill_confidence_score"])
             relevance_scores.append(q_scores["relevance_score"])
 
+            note = q_scores["llm_notes"]
+            if note and "(Mock response)" not in note:
+                scored_notes.append((avg_q_score, note))
+
         avg_overall = sum(overall_scores) / len(overall_scores) if overall_scores else 0.0
         avg_clarity = sum(clarity_scores) / len(clarity_scores) if clarity_scores else 0.0
         avg_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.0
@@ -97,6 +102,10 @@ def run_interview_pipeline(session_id: int, role_applied: str, language: str) ->
         candidate.integrity_flags = integrity_flags
         candidate.face_presence_ratio = avg_face_presence
 
+        scored_notes.sort(key=lambda x: x[0], reverse=True)
+        strengths = [scored_notes[0][1]] if scored_notes else []
+        improvement_areas = [scored_notes[-1][1]] if len(scored_notes) > 1 else []
+
         db.add(
             Assessment(
                 candidate_id=candidate.id,
@@ -104,8 +113,8 @@ def run_interview_pipeline(session_id: int, role_applied: str, language: str) ->
                 confidence_score=avg_confidence,
                 relevance_score=avg_relevance,
                 overall_score=avg_overall,
-                strengths=["Structured response", "Good role alignment"] if avg_overall > 5 else [],
-                improvement_areas=["Add more concrete examples", "Quantify past outcomes"] if avg_overall <= 8 else [],
+                strengths=strengths,
+                improvement_areas=improvement_areas,
             )
         )
         

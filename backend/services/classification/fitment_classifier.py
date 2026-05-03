@@ -13,15 +13,15 @@ def classify_candidate(candidate_id: int, overall_score: float, integrity_flags:
     elif integrity_flags:
         reasons.extend(integrity_flags)
         label = "REQUIRES_MANUAL_VERIFICATION"
-    elif overall_score >= 8:
+    elif overall_score >= 7.5:
         label = "JOB_READY"
         reasons.append("Strong interview performance")
-    elif overall_score >= 6:
+    elif overall_score >= 4.5:
         label = "REQUIRES_UPSKILLING"
         reasons.append("Promising candidate with moderate skill gaps")
     else:
-        label = "LOW_QUALITY_SUBMISSION"
-        reasons.append("Response quality below baseline")
+        label = "REQUIRES_MANUAL_VERIFICATION"
+        reasons.append("Response quality below baseline; manual review recommended")
 
     return ClassificationResponse(
         candidate_id=candidate_id,

@@ -1,5 +1,80 @@
 {
   "appName": "स्किलफिट",
+  "complete": {
+    "eyebrow": "साक्षात्कार पूर्ण",
+    "headline": "आपका परिणाम",
+    "noResult": "कोई पूर्ण साक्षात्कार नहीं मिला।",
+    "scoreTitle": "कुल स्कोर",
+    "scoreDesc": "सत्र का संयुक्त स्कोर",
+    "confidenceTitle": "आत्मविश्वास",
+    "confidenceDesc": "वर्गीकरण विश्वास स्तर",
+    "buttonNewSession": "नया सत्र शुरू करें",
+    "buttonAdminSide": "एडमिन साइड देखें",
+    "fitmentLabels": {
+      "JOB_READY": "नौकरी के लिए तैयार",
+      "REQUIRES_UPSKILLING": "कौशल विकास आवश्यक",
+      "REQUIRES_MANUAL_VERIFICATION": "मैन्युअल समीक्षा आवश्यक",
+      "LOW_QUALITY_SUBMISSION": "कम गुणवत्ता का सबमिशन",
+      "SUSPECTED_DUPLICATE": "संदिग्ध डुप्लीकेट"
+    },
+    "nextStepMessages": {
+      "JOB_READY": "बधाई हो! आप अगले भर्ती चरण के लिए तैयार हैं।",
+      "REQUIRES_UPSKILLING": "आपके प्रोफ़ाइल में संभावना है। आपको एक उपयुक्त प्रशिक्षण कार्यक्रम से जोड़ा जाएगा।",
+      "REQUIRES_MANUAL_VERIFICATION": "आपके प्रोफ़ाइल की समीक्षा एक अधिकारी करेंगे। आपसे जल्द संपर्क किया जाएगा।",
+      "LOW_QUALITY_SUBMISSION": "आपका सबमिशन प्रोसेस करने में कठिनाई हुई। कृपया शांत जगह और अच्छी रोशनी में पुनः प्रयास करें।",
+      "SUSPECTED_DUPLICATE": "आपका आवेदन समीक्षाधीन है। सहायता के लिए निकटतम EDCS कार्यालय से संपर्क करें।"
+    }
+  },
+  "processing": {
+    "eyebrow": "प्रसंस्करण",
+    "headline": "हम अभी आपके साक्षात्कार की समीक्षा कर रहे हैं।",
+    "statusSubmitting": "आपके उत्तर सबमिट किए जा रहे हैं...",
+    "statusFinalizing": "आपका साक्षात्कार सत्र अंतिम रूप दिया जा रहा है...",
+    "statusChecking": "आपके परिणाम जाँचे जा रहे हैं...",
+    "statusError": "प्रसंस्करण पूरा नहीं हो सका। कृपया साक्षात्कार फिर से प्रयास करें।",
+    "footerNote": "आपके साक्षात्कार का मूल्यांकन किया जा रहा है। इसमें कुछ समय लग सकता है।"
+  },
+  "aiVoice": {
+    "sectionKicker": "साक्षात्कार प्रश्न",
+    "buttonPlay": "प्रश्न सुनें",
+    "buttonStop": "रोकें"
+  },
+  "interview": {
+    "eyebrow": "साक्षात्कार",
+    "headline": "{{role}} साक्षात्कार",
+    "defaultRole": "अभ्यर्थी",
+    "recordingSaved": "रिकॉर्डिंग सहेजी गई! सबमिट करने के लिए तैयार।",
+    "loadingQuestions": "प्रश्न लोड हो रहे हैं...",
+    "buttonExit": "बाहर निकलें",
+    "buttonSubmitContinue": "सबमिट करें और जारी रखें",
+    "buttonSubmitFinish": "सबमिट करें और समाप्त करें"
+  },
+  "permissions": {
+    "eyebrow": "अनुमतियाँ",
+    "headline": "कैमरा और माइक्रोफ़ोन की अनुमति",
+    "body": "SkillFit को आपके वीडियो उत्तर रिकॉर्ड करने के लिए कैमरा और माइक्रोफ़ोन की आवश्यकता है। नीचे दिए बटन पर क्लिक करें और जब ब्राउज़र पूछे तो अनुमति दें।",
+    "deniedError": "अनुमति अस्वीकार कर दी गई। कृपया ब्राउज़र सेटिंग्स में कैमरा और माइक्रोफ़ोन की अनुमति दें, फिर पुनः प्रयास करें।",
+    "buttonBack": "वापस",
+    "buttonAllow": "कैमरा और माइक की अनुमति दें",
+    "buttonTryAgain": "पुनः प्रयास करें"
+  },
+  "registration": {
+    "eyebrow": "पंजीकरण",
+    "headline": "अभ्यर्थी विवरण",
+    "fullName": "पूरा नाम",
+    "district": "जिला",
+    "roleApplied": "आवेदित पद",
+    "interviewLanguage": "साक्षात्कार भाषा",
+    "phoneNumber": "फ़ोन नंबर (वैकल्पिक)",
+    "roles": {
+      "Electrician": "इलेक्ट्रीशियन",
+      "Delivery Associate": "डिलीवरी सहयोगी",
+      "Plumber": "प्लम्बर",
+      "Welder": "वेल्डर"
+    },
+    "buttonBack": "वापस",
+    "buttonContinue": "आगे बढ़ें"
+  },
   "candidatePortal": "उम्मीदवार पोर्टल",
   "adminPortal": "एडमिन डैशबोर्ड",
   "start": "शुरू करें",

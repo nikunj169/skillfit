@@ -1,33 +1,43 @@
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMediaRecorder } from "../../hooks/useMediaRecorder";
 
 function PermissionGate() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { permissionState, requestPermissions } = useMediaRecorder();
+
+  useEffect(() => {
+    if (permissionState === "granted") {
+      navigate("/interview");
+    }
+  }, [permissionState, navigate]);
 
   return (
     <main className="screen">
       <section className="panel">
-        <p className="eyebrow">Permissions</p>
-        <h1>Prepare device access</h1>
-        <p className="lede">
-          The application requires camera and microphone access to record your video responses. Please grant permissions to continue.
-        </p>
+        <p className="eyebrow">{t("permissions.eyebrow")}</p>
+        <h1>{t("permissions.headline")}</h1>
+        <p className="lede">{t("permissions.body")}</p>
+
+        {permissionState === "denied" && (
+          <p className="error-text">{t("permissions.deniedError")}</p>
+        )}
 
         <div className="button-row">
-          <button type="button" className="button button-primary" onClick={requestPermissions}>
-            Request Camera and Mic
+          <button type="button" className="button button-secondary" onClick={() => navigate("/register")}>
+            {t("permissions.buttonBack")}
           </button>
-          <button type="button" className="button button-secondary" onClick={() => navigate("/interview")}>
-            Continue Anyway
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={requestPermissions}
+            disabled={permissionState === "granted"}
+          >
+            {permissionState === "denied" ? t("permissions.buttonTryAgain") : t("permissions.buttonAllow")}
           </button>
         </div>
-
-        <p className="inline-status">Permission status: {permissionState}</p>
-
-        <button type="button" className="button button-primary" onClick={() => navigate("/interview")}>
-          Start Interview
-        </button>
       </section>
     </main>
   );

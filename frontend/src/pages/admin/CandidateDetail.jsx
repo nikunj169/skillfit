@@ -19,13 +19,13 @@ function CandidateDetail() {
     loadCandidate();
   }, [candidateId]);
 
-  async function handleToggleShortlist() {
+  async function handleAction(action) {
     setIsUpdating(true);
     try {
-      const updated = await updateCandidateStatus(candidateId, !candidate.shortlisted);
+      const updated = await updateCandidateStatus(candidateId, action);
       setCandidate(updated);
     } catch (err) {
-      alert("Failed to update status.");
+      alert("Failed to update candidate status.");
     } finally {
       setIsUpdating(false);
     }
@@ -55,11 +55,36 @@ function CandidateDetail() {
           </div>
           <div className="button-row">
             <button
-              className={`button ${candidate.shortlisted ? "button-secondary" : "button-primary"}`}
-              onClick={handleToggleShortlist}
+              type="button"
+              className={`button ${candidate.status === "shortlisted" ? "button-primary" : "button-secondary"}`}
+              onClick={() => handleAction("shortlist_job")}
               disabled={isUpdating}
             >
-              {candidate.shortlisted ? "Remove from Shortlist" : "Shortlist Candidate"}
+              Shortlist for Job
+            </button>
+            <button
+              type="button"
+              className={`button ${candidate.status === "shortlisted_training" ? "button-primary" : "button-secondary"}`}
+              onClick={() => handleAction("shortlist_training")}
+              disabled={isUpdating}
+            >
+              Shortlist for Training
+            </button>
+            <button
+              type="button"
+              className={`button ${candidate.status === "manual_review" ? "button-primary" : "button-secondary"}`}
+              onClick={() => handleAction("flag_review")}
+              disabled={isUpdating}
+            >
+              Flag for Review
+            </button>
+            <button
+              type="button"
+              className={`button ${candidate.status === "rejected" ? "button-primary" : "button-secondary"}`}
+              onClick={() => handleAction("reject")}
+              disabled={isUpdating}
+            >
+              Reject
             </button>
           </div>
         </div>

@@ -1,5 +1,9 @@
-function FitmentBadge({ label }) {
-  return <span className={`badge badge-${label?.toLowerCase()}`}>{label || "Pending"}</span>;
+function FitmentBadge({ label, displayLabel }) {
+  return (
+    <span className={`badge badge-${label?.toLowerCase()}`}>
+      {displayLabel ?? label ?? "Pending"}
+    </span>
+  );
 }
 
 export default FitmentBadge;

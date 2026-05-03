@@ -33,6 +33,36 @@ QUESTION_BANK = {
         "ತಪ್ಪಾದ ವಿಳಾಸ ಅಥವಾ ಲಭ್ಯವಿಲ್ಲದ ಗ್ರಾಹಕರ ಪರಿಸ್ಥಿತಿಯನ್ನು ನೀವು ಹೇಗೆ ನಿಭಾಯಿಸುತ್ತೀರಿ?",
         "ಡೆಲಿವರಿ ಹಸ್ತಾಂತರಿಸುವ ಮೊದಲು ನೀವು ಯಾವ ಪರಿಶೀಲನೆಗಳನ್ನು ಮಾಡುತ್ತೀರಿ?",
     ],
+    ("plumber", "en"): [
+        "Describe a recent plumbing repair or installation you completed — what was the fault and how did you fix it?",
+        "How do you locate a water leak that is hidden behind a wall or under the floor?",
+        "What safety steps do you take when working on pressurised water supply lines or drainage pipes?",
+    ],
+    ("plumber", "hi"): [
+        "Haal hi mein aapne jo plumbing ka kaam kiya, uske baare mein batayein — kya kharabi thi aur aapne use kaise theek kiya?",
+        "Aap diwar ke peeche ya zameen ke neeche chhupe paani ke leak ko kaise dhundhte hain?",
+        "Pressure water supply line ya drainage pipe par kaam karte waqt aap kaun se safety kadam uthate hain?",
+    ],
+    ("plumber", "kn"): [
+        "ನೀವು ಇತ್ತೀಚೆಗೆ ಮಾಡಿದ ಪ್ಲಂಬಿಂಗ್ ದುರಸ್ತಿ ಅಥವಾ ಅಳವಡಿಕೆ ಬಗ್ಗೆ ಹೇಳಿ — ಸಮಸ್ಯೆ ಏನಿತ್ತು ಮತ್ತು ನೀವು ಅದನ್ನು ಹೇಗೆ ಸರಿಪಡಿಸಿದಿರಿ?",
+        "ಗೋಡೆಯ ಹಿಂದೆ ಅಥವಾ ನೆಲದ ಅಡಿ ಮರೆಮಾಡಿದ ನೀರಿನ ಸೋರಿಕೆಯನ್ನು ನೀವು ಹೇಗೆ ಪತ್ತೆ ಮಾಡುತ್ತೀರಿ?",
+        "ಒತ್ತಡದ ನೀರಿನ ಕೊಳವೆ ಅಥವಾ ಒಳಚರಂಡಿ ಪೈಪ್‌ಗಳ ಮೇಲೆ ಕೆಲಸ ಮಾಡುವಾಗ ನೀವು ಯಾವ ಸುರಕ್ಷತಾ ಕ್ರಮಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತೀರಿ?",
+    ],
+    ("welder", "en"): [
+        "Tell us about a welding job you recently completed — what material were you working with and which technique did you use?",
+        "How do you inspect a finished weld to confirm it meets quality and safety standards?",
+        "What protective equipment do you wear while welding and why is each item important?",
+    ],
+    ("welder", "hi"): [
+        "Haal hi mein aapne jo welding kaam kiya, uske baare mein batayein — aapne kaunsa material use kiya aur kaunsi technique apnayi?",
+        "Aap ek poori ho chuki weld ko kaise inspect karte hain taaki woh quality aur safety standards ko poora kare?",
+        "Welding ke dauran aap kaun se protective equipment pahante hain aur har ek kyon zaroori hai?",
+    ],
+    ("welder", "kn"): [
+        "ನೀವು ಇತ್ತೀಚೆಗೆ ಮಾಡಿದ ವೆಲ್ಡಿಂಗ್ ಕೆಲಸದ ಬಗ್ಗೆ ಹೇಳಿ — ನೀವು ಯಾವ ಲೋಹ ಬಳಸಿದಿರಿ ಮತ್ತು ಯಾವ ತಂತ್ರ ಅನುಸರಿಸಿದಿರಿ?",
+        "ವೆಲ್ಡ್ ಗುಣಮಟ್ಟ ಮತ್ತು ಸುರಕ್ಷತಾ ಮಾನದಂಡಗಳನ್ನು ಪೂರೈಸುತ್ತದೆ ಎಂದು ಖಚಿತಪಡಿಸಲು ನೀವು ಪೂರ್ಣಗೊಂಡ ವೆಲ್ಡ್ ಅನ್ನು ಹೇಗೆ ಪರಿಶೀಲಿಸುತ್ತೀರಿ?",
+        "ವೆಲ್ಡಿಂಗ್ ಮಾಡುವಾಗ ನೀವು ಯಾವ ರಕ್ಷಣಾ ಉಪಕರಣಗಳನ್ನು ಧರಿಸುತ್ತೀರಿ ಮತ್ತು ಪ್ರತಿಯೊಂದು ಏಕೆ ಮುಖ್ಯ?",
+    ],
 }
 
 

@@ -34,8 +34,9 @@ function Dashboard() {
 
   const districts = Array.from(new Set(candidates.map((candidate) => candidate.district))).sort();
 
-  async function handleShortlist(candidateId, shortlisted) {
-    const updated = await updateCandidateStatus(candidateId, shortlisted);
+  async function handleShortlist(candidateId, currentlyShortlisted) {
+    const action = currentlyShortlisted ? "flag_review" : "shortlist_job";
+    const updated = await updateCandidateStatus(candidateId, action);
     setCandidates((current) => current.map((candidate) => (candidate.id === candidateId ? updated : candidate)));
   }
 
@@ -109,7 +110,7 @@ function Dashboard() {
                     <button
                       type="button"
                       className="button button-inline"
-                      onClick={() => handleShortlist(candidate.id, !candidate.shortlisted)}
+                      onClick={() => handleShortlist(candidate.id, candidate.shortlisted)}
                     >
                       {candidate.shortlisted ? "Unshortlist" : "Shortlist"}
                     </button>

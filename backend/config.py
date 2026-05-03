@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     port: int = 8000
     database_url: str = "sqlite:///./skillfit.db"
     admin_token: str = "skillfit-admin"
+    admin_username: str = "admin@skillfit.in"
+    admin_password: str = "skillfit2024"
     sarvam_api_key: str | None = None
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None

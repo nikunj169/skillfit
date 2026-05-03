@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel
 
@@ -44,8 +44,8 @@ class CandidateListResponse(BaseModel):
     total: int
 
 
-class ShortlistRequest(BaseModel):
-    shortlisted: bool
+class CandidateActionRequest(BaseModel):
+    action: Literal["shortlist_job", "shortlist_training", "flag_review", "reject"]
 
 
 class AdminLoginRequest(BaseModel):

@@ -1,14 +1,23 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "../../context/SessionContext";
 
+const ROLES = ["Electrician", "Delivery Associate", "Plumber", "Welder"];
+
 function Registration() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { registration, setRegistration } = useSessionContext();
   const [formState, setFormState] = useState(registration);
 
   function handleChange(field, value) {
     setFormState((current) => ({ ...current, [field]: value }));
+  }
+
+  function handleLanguageChange(value) {
+    handleChange("language", value);
+    i18n.changeLanguage(value);
   }
 
   function handleSubmit(event) {
@@ -20,11 +29,11 @@ function Registration() {
   return (
     <main className="screen">
       <section className="panel">
-        <p className="eyebrow">Registration</p>
-        <h1>Collect basic candidate details</h1>
+        <p className="eyebrow">{t("registration.eyebrow")}</p>
+        <h1>{t("registration.headline")}</h1>
         <form className="form-grid" onSubmit={handleSubmit}>
           <label className="form-field">
-            <span>Full name</span>
+            <span>{t("registration.fullName")}</span>
             <input
               value={formState.full_name}
               onChange={(event) => handleChange("full_name", event.target.value)}
@@ -32,7 +41,7 @@ function Registration() {
             />
           </label>
           <label className="form-field">
-            <span>District</span>
+            <span>{t("registration.district")}</span>
             <input
               value={formState.district}
               onChange={(event) => handleChange("district", event.target.value)}
@@ -40,23 +49,24 @@ function Registration() {
             />
           </label>
           <label className="form-field">
-            <span>Role applied</span>
+            <span>{t("registration.roleApplied")}</span>
             <select
               value={formState.role_applied}
               onChange={(event) => handleChange("role_applied", event.target.value)}
               required
             >
-              <option value="Electrician">Electrician</option>
-              <option value="Delivery Associate">Delivery Associate</option>
-              <option value="Plumber">Plumber</option>
-              <option value="Welder">Welder</option>
+              {ROLES.map((role) => (
+                <option key={role} value={role}>
+                  {t(`registration.roles.${role}`, role)}
+                </option>
+              ))}
             </select>
           </label>
           <label className="form-field">
-            <span>Interview Language</span>
+            <span>{t("registration.interviewLanguage")}</span>
             <select
               value={formState.language}
-              onChange={(event) => handleChange("language", event.target.value)}
+              onChange={(event) => handleLanguageChange(event.target.value)}
               required
             >
               <option value="en">English (English)</option>
@@ -65,7 +75,7 @@ function Registration() {
             </select>
           </label>
           <label className="form-field">
-            <span>Phone number</span>
+            <span>{t("registration.phoneNumber")}</span>
             <input
               value={formState.phone_number}
               onChange={(event) => handleChange("phone_number", event.target.value)}
@@ -73,10 +83,10 @@ function Registration() {
           </label>
           <div className="button-row">
             <button type="button" className="button button-secondary" onClick={() => navigate("/")}>
-              Back
+              {t("registration.buttonBack")}
             </button>
             <button type="submit" className="button button-primary">
-              Continue
+              {t("registration.buttonContinue")}
             </button>
           </div>
         </form>

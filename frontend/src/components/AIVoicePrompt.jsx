@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function AIVoicePrompt({ question, language }) {
+  const { t } = useTranslation();
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
@@ -33,11 +35,11 @@ function AIVoicePrompt({ question, language }) {
 
   return (
     <section className="panel panel-soft">
-      <p className="section-kicker">AI Prompt</p>
+      <p className="section-kicker">{t("aiVoice.sectionKicker")}</p>
       <h3>{question}</h3>
       <div className="button-row" style={{ marginTop: "16px" }}>
         <button type="button" className="button button-secondary" onClick={handlePlay}>
-          {isPlaying ? "Stop Audio" : "Play Question"}
+          {isPlaying ? t("aiVoice.buttonStop") : t("aiVoice.buttonPlay")}
         </button>
       </div>
     </section>

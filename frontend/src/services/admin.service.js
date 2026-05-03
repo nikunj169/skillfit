@@ -17,9 +17,9 @@ export async function getCandidateDetail(candidateId) {
   return response.data;
 }
 
-export async function updateCandidateStatus(candidateId, shortlisted) {
+export async function updateCandidateStatus(candidateId, action) {
   const response = await api.patch(`/admin/candidates/${candidateId}/status`, {
-    shortlisted,
+    action,
   });
   return response.data;
 }

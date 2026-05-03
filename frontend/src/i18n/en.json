@@ -1,5 +1,80 @@
 {
   "appName": "SkillFit",
+  "complete": {
+    "eyebrow": "Interview Complete",
+    "headline": "Your result",
+    "noResult": "No completed interview found.",
+    "scoreTitle": "Overall score",
+    "scoreDesc": "Aggregated session score",
+    "confidenceTitle": "Confidence",
+    "confidenceDesc": "Classification confidence",
+    "buttonNewSession": "Start Another Session",
+    "buttonAdminSide": "View Admin Side",
+    "fitmentLabels": {
+      "JOB_READY": "Job Ready",
+      "REQUIRES_UPSKILLING": "Requires Upskilling",
+      "REQUIRES_MANUAL_VERIFICATION": "Manual Review Required",
+      "LOW_QUALITY_SUBMISSION": "Low Quality Submission",
+      "SUSPECTED_DUPLICATE": "Suspected Duplicate"
+    },
+    "nextStepMessages": {
+      "JOB_READY": "Congratulations! You are ready for the next hiring stage.",
+      "REQUIRES_UPSKILLING": "Your profile shows potential. You will be connected with a suitable training programme.",
+      "REQUIRES_MANUAL_VERIFICATION": "Your profile will be reviewed by an officer. You will be contacted soon.",
+      "LOW_QUALITY_SUBMISSION": "We had trouble processing your submission. Please try again in a quieter place with better lighting.",
+      "SUSPECTED_DUPLICATE": "Your application is currently under review. Please contact the nearest EDCS office if you need assistance."
+    }
+  },
+  "processing": {
+    "eyebrow": "Processing",
+    "headline": "We are reviewing your interview now.",
+    "statusSubmitting": "Submitting your answers...",
+    "statusFinalizing": "Finalizing your interview session...",
+    "statusChecking": "Checking your results...",
+    "statusError": "We could not complete processing. Please try the interview again.",
+    "footerNote": "Your interview is being evaluated. This may take a moment."
+  },
+  "aiVoice": {
+    "sectionKicker": "Interview Question",
+    "buttonPlay": "Play Question",
+    "buttonStop": "Stop Audio"
+  },
+  "interview": {
+    "eyebrow": "Interview",
+    "headline": "{{role}} interview",
+    "defaultRole": "Candidate",
+    "recordingSaved": "Recording saved! Ready to submit.",
+    "loadingQuestions": "Loading question set...",
+    "buttonExit": "Exit",
+    "buttonSubmitContinue": "Submit and Continue",
+    "buttonSubmitFinish": "Submit and Finish"
+  },
+  "permissions": {
+    "eyebrow": "Permissions",
+    "headline": "Camera and microphone access",
+    "body": "SkillFit needs access to your camera and microphone to record your video responses. Tap the button below and allow access when your browser asks.",
+    "deniedError": "Access was denied. Please allow camera and microphone access in your browser settings, then try again.",
+    "buttonBack": "Back",
+    "buttonAllow": "Allow Camera and Mic",
+    "buttonTryAgain": "Try Again"
+  },
+  "registration": {
+    "eyebrow": "Registration",
+    "headline": "Candidate details",
+    "fullName": "Full name",
+    "district": "District",
+    "roleApplied": "Role applied",
+    "interviewLanguage": "Interview language",
+    "phoneNumber": "Phone number (optional)",
+    "roles": {
+      "Electrician": "Electrician",
+      "Delivery Associate": "Delivery Associate",
+      "Plumber": "Plumber",
+      "Welder": "Welder"
+    },
+    "buttonBack": "Back",
+    "buttonContinue": "Continue"
+  },
   "candidatePortal": "Candidate Portal",
   "adminPortal": "Admin Dashboard",
   "start": "Start",

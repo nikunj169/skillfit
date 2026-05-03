@@ -48,6 +48,8 @@ The repository now includes a working starter implementation for both the fronte
   a `questions` table model exists, the API can read seeded DB questions, and `scripts/seed_questions.py` now seeds starter role/language question sets
 - Docker Compose, Nginx, and Kubernetes starter infrastructure files added
 - Basic backend tests passing for core API flow
+- LLM provider is now configurable: Claude (Anthropic) is tried first when `SKILLFIT_LLM_PROVIDER=claude`, falling back to OpenAI then a heuristic scorer
+- PermissionGate is now a real gate: the candidate cannot advance to the interview without granting camera and microphone access; denied state surfaces a contextual error and Try Again button
 
 ### Current Scope of the Prototype
 
@@ -55,11 +57,12 @@ The repository now includes a working starter implementation for both the fronte
 - ASR is a starter placeholder or API-key gated
 - Text-to-Speech (TTS) for question delivery is now fully functional using the browser-native `window.speechSynthesis` API
 - Face Validation is now powered by real MediaPipe/OpenCV ML logic, processing uploaded video blobs at 2fps to verify candidate presence
-- LLM Assessment Engine is now integrated with the OpenAI API using structured JSON output to score transcripts automatically
+- LLM Assessment Engine now supports **Claude (Anthropic) and OpenAI**, selected via the `SKILLFIT_LLM_PROVIDER` config (`claude` or `openai`); falls back to the heuristic scorer when no API key is set
 - Duplicate detection now uses SQLite-compatible cosine similarity over stored embeddings (DeepFace face-embedding extraction planned for production)
 - Audio Validation now computes real SNR and silence ratio when `ffmpeg` is available; gracefully falls back to mock values when it is not
 - Admin detail now includes a full per-question audit trail with per-question scoring and AI notes
-- Admin action buttons are now functional, allowing recruiters to officially shortlist candidates from the detail view
+- Admin detail view exposes four action buttons (Shortlist for Job, Shortlist for Training, Flag for Review, Reject) — each maps to a distinct status and highlights when active; credentials are now read from `SKILLFIT_ADMIN_USERNAME` / `SKILLFIT_ADMIN_PASSWORD` env vars (dev defaults pre-filled)
+- `scripts/seed_admin.py` is now a real setup script that verifies and prints the effective admin credentials and warns when defaults are in use
 - Question lookup still keeps a code fallback so local development works even before seeding
 - The processing screen now uses the session-status endpoint, and interview finalization now runs through a lightweight backend background task
 - SQLite is sufficient for local development; PostgreSQL/pgvector remains the next infrastructure upgrade for production parity
@@ -244,11 +247,8 @@ skillfit/
 │   │   │   ├── audio_validator.py     # SNR / silence ratio checks
 │   │   │   └── duplicate_detector.py  # DeepFace embedding + cosine similarity
 │   │   │
-│   │   ├── classification/
-│   │   │   └── fitment_classifier.py  # Rule engine over aggregated scores + flags
-│   │   │
-│   │   └── tts/
-│   │       └── tts_client.py          # Text-to-speech for question delivery (Sarvam / gTTS)
+│   │   └── classification/
+│   │       └── fitment_classifier.py  # Rule engine over aggregated scores + flags
 │   │
 │   ├── models/
 │   │   ├── candidate.py               # SQLAlchemy ORM model
@@ -302,9 +302,9 @@ skillfit/
 
 ## Core Modules
 
-### 1. Interview Agent (`routers/interview.py` + `services/tts/`)
+### 1. Interview Agent (`routers/interview.py`)
 
-The candidate opens the web app and selects a language. The backend delivers structured questions via text-to-speech (Sarvam AI TTS for Kannada/Hindi, browser Web Speech API or gTTS for English). Each question response is captured as a video chunk via the browser's `MediaRecorder` API and uploaded as a binary blob.
+The candidate opens the web app and selects a language. Questions are delivered via the browser-native `window.speechSynthesis` API (Web Speech API) — no server-side TTS call is needed. Each question response is captured as a video chunk via the browser's `MediaRecorder` API and uploaded as a binary blob.
 
 **Sequence:**
 1. `POST /session/start` — creates a session record, returns `session_id` + first question audio
@@ -440,11 +440,11 @@ Candidate opens mobile browser
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/v1/session/start` | Create session, receive first question |
-| `POST` | `/api/v1/session/submit-chunk` | Upload video blob for one question |
-| `POST` | `/api/v1/session/finalize` | Finalize session, trigger classification |
-| `GET` | `/api/v1/session/{session_id}/status` | Poll for classification result |
-| `GET` | `/api/v1/questions/{role}/{language}` | Fetch question set |
+| `POST` | `/api/v1/interview/session/start` | Create session, receive first question |
+| `POST` | `/api/v1/interview/session/submit-chunk` | Upload video blob for one question |
+| `POST` | `/api/v1/interview/session/finalize` | Finalize session, trigger classification |
+| `GET` | `/api/v1/interview/session/{session_id}/status` | Poll for classification result |
+| `GET` | `/api/v1/interview/questions/{role}/{language}` | Fetch question set |
 
 ### Admin Endpoints (JWT Protected)
 
@@ -503,7 +503,7 @@ Candidate opens mobile browser
 
 Current implementation note:
 - The prototype now persists per-question response text in a `question_responses` table with question key/text, transcript, and order index.
-- Per-question scoring fields from the target design are not stored yet; assessment remains session-level for now.
+- Per-question scoring fields (`relevance_score`, `completeness_score`, `clarity_score`, `skill_confidence_score`, `llm_notes`) are fully persisted in `question_responses` and surfaced in the admin detail view.
 
 ### `face_embeddings`
 
@@ -761,7 +761,7 @@ Zero install friction is a hard requirement for low-digital-literacy candidates.
 - **Offline support**: The current implementation requires a stable internet connection. Edge-caching of questions and offline recording with deferred upload is a planned extension.
 - **TTS quality in Kannada**: Browser Web Speech API Kannada support is inconsistent. Sarvam TTS API is the preferred fallback but adds latency on first load; we pre-generate audio for the question bank.
 - **Face embedding cold storage**: Large-scale deployments (100K+ candidates) will require ANN indexing (e.g., HNSW via pgvector) rather than linear scan for duplicate detection — this is already supported by pgvector and needs only index creation.
-- **Role coverage**: The current question bank covers Electrician, Plumber, Delivery Associate, and Retail Staff. Expanding to 50+ roles requires a question authoring workflow for domain experts.
+- **Role coverage**: The current question bank covers Electrician, Plumber, Welder, and Delivery Associate. Expanding to 50+ roles requires a question authoring workflow for domain experts.
 
 ---
 
