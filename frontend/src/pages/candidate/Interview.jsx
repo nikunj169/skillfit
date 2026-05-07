@@ -13,7 +13,15 @@ function Interview() {
   const { t } = useTranslation();
   const { registration, session } = useSessionContext();
   const { beginSession, sendChunk, questions, loading, error } = useInterviewSession();
-  const { requestPermissions, startRecording, stopRecording, cleanupStream, isRecording, stream } = useMediaRecorder();
+  const {
+    requestPermissions,
+    startRecording,
+    stopRecording,
+    cleanupStream,
+    isRecording,
+    stream,
+    mediaError,
+  } = useMediaRecorder();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [videoBlob, setVideoBlob] = useState(null);
@@ -21,16 +29,15 @@ function Interview() {
   const recordPromiseRef = useRef(null);
 
   useEffect(() => {
-    async function ensureSession() {
-      if (!session && !hasStartedRef.current) {
-        hasStartedRef.current = true;
-        await requestPermissions(true);
-        await beginSession();
-      }
-    }
-
-    ensureSession();
+    requestPermissions(true);
     return () => cleanupStream();
+  }, [requestPermissions, cleanupStream]);
+
+  useEffect(() => {
+    if (!session && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      beginSession();
+    }
   }, [beginSession, session, requestPermissions, cleanupStream]);
 
   const currentQuestion = questions[currentIndex];
@@ -83,6 +90,7 @@ function Interview() {
               onStart={handleStartRecording}
               onStop={handleStopRecording}
               disabled={loading}
+              mediaError={mediaError}
             />
             {videoBlob && !isRecording && (
               <p className="inline-status">{t("interview.recordingSaved")}</p>

@@ -1,48 +1,77 @@
-import { useState, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useMediaRecorder() {
   const [permissionState, setPermissionState] = useState("idle");
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState(null);
+  const [mediaError, setMediaError] = useState("");
   const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
+
+  useEffect(() => {
+    streamRef.current = stream;
+  }, [stream]);
 
   const requestPermissions = useCallback(async (keepAlive = false) => {
     try {
-      if (navigator.mediaDevices?.getUserMedia) {
-        const newStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        if (!keepAlive) {
-          newStream.getTracks().forEach((track) => track.stop());
-        } else {
-          setStream(newStream);
-        }
+      setMediaError("");
+
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Camera and microphone are not supported by this browser.");
       }
+
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: { echoCancellation: true, noiseSuppression: true },
+      });
+
+      if (!keepAlive) {
+        newStream.getTracks().forEach((track) => track.stop());
+      } else {
+        streamRef.current?.getTracks().forEach((track) => track.stop());
+        streamRef.current = newStream;
+        setStream(newStream);
+      }
+
       setPermissionState("granted");
       return true;
-    } catch {
+    } catch (error) {
+      setMediaError(error?.message || "Camera or microphone permission failed.");
       setPermissionState("denied");
       return false;
     }
   }, []);
 
   const startRecording = useCallback(() => {
-    if (!stream) return null;
-    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    const activeStream = streamRef.current;
+    if (!activeStream) return null;
+
+    let mediaRecorder;
+    try {
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")
+        ? "video/webm;codecs=vp8,opus"
+        : "video/webm";
+      mediaRecorder = new MediaRecorder(activeStream, { mimeType });
+    } catch {
+      mediaRecorder = new MediaRecorder(activeStream);
+    }
+
     mediaRecorderRef.current = mediaRecorder;
-    
+
     const chunks = [];
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) chunks.push(e.data);
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) chunks.push(event.data);
     };
-    
+
     return new Promise((resolve) => {
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "video/webm" });
         resolve(blob);
       };
       mediaRecorder.start();
       setIsRecording(true);
     });
-  }, [stream]);
+  }, []);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
@@ -52,11 +81,19 @@ export function useMediaRecorder() {
   }, []);
 
   const cleanupStream = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  }, [stream]);
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    setStream(null);
+  }, []);
 
-  return { permissionState, requestPermissions, startRecording, stopRecording, cleanupStream, isRecording, stream };
+  return {
+    permissionState,
+    mediaError,
+    requestPermissions,
+    startRecording,
+    stopRecording,
+    cleanupStream,
+    isRecording,
+    stream,
+  };
 }
